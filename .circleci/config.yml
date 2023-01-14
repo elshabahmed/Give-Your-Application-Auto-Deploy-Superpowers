@@ -21,7 +21,7 @@ commands:
               npm install
               npm run migration:revert
             fi
-  
+
   
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -145,7 +145,7 @@ jobs:
       - restore_cache:
           keys: [frontend-build]
       - run:
-          name: Front-end Vulnerability Scan
+          name: Front-end Scan
           command: |
              cd frontend
              npm install
@@ -162,7 +162,7 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: Back-end Vulnerability Scan
+          name: Back-end Scan
           command: |
              cd backend
              npm install            
@@ -208,7 +208,7 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment
-      # Here's where you will add some code to rollback on failure      
+
 
   configure-infrastructure:
     docker:
@@ -228,7 +228,7 @@ jobs:
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment
-      # Here's where you will add some code to rollback on failure      
+
 
   run-migrations:
     docker:
@@ -294,8 +294,8 @@ jobs:
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment
       - revert-migrations
-      # Here's where you will add some code to rollback on failure      
-                    
+
+
   deploy-backend:
     docker:
       - image: cimg/base:stable
@@ -337,7 +337,7 @@ jobs:
 
       - destroy-environment
       - revert-migrations
-      # Here's where you will add some code to rollback on failure  
+
 
   smoke-test:
     docker:
@@ -347,7 +347,7 @@ jobs:
       - install_awscli
       - install_nodejs      
       - run:
-          name: Backend smoke test.
+          name: Backend smoke test
           command: |
             BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
@@ -362,7 +362,7 @@ jobs:
               exit 1
             fi
       - run:
-          name: Frontend smoke test.
+          name: Frontend smoke test
           command: |
             FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
             if curl -s $FRONTEND_WEBSITE | grep "Welcome"
@@ -373,7 +373,7 @@ jobs:
             fi
       - destroy-environment
       - revert-migrations
-      # Here's where you will add some code to rollback on failure  
+
 
   cloudfront-update:
     docker:
@@ -399,7 +399,7 @@ jobs:
               --stack-name InitialStack
       - destroy-environment
       - revert-migrations
-      # Here's where you will add some code to rollback on failure  
+
 
   cleanup:
       docker:
